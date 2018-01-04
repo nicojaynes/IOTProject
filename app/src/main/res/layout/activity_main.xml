@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="se.mah.m11p0121.iotproject.MainActivity"
+    android:background="@android:color/holo_red_dark">
+
+    <TextView
+        android:id="@+id/tv_iotp"
+        android:textSize="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="IOT-Project"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:layout_below="@id/tv_iotp"
+        android:id="@+id/btn_led_up_on"
+        android:text="LED UP ON"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_below="@+id/tv_iotp"
+        android:layout_toRightOf="@+id/btn_led_up_on"
+        android:id="@+id/btn_led_up_off"
+        android:text="LED UP OFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_below="@+id/btn_led_up_on"
+        android:id="@+id/btn_led_down_on"
+        android:text="LED DOWN ON"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_below="@+id/btn_led_up_on"
+        android:layout_toRightOf="@+id/btn_led_down_on"
+        android:id="@+id/btn_led_down_off"
+        android:text="LED DOWN OFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_below="@+id/btn_led_down_on"
+        android:id="@+id/btn_led_left_on"
+        android:text="LED LEFT ON"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_below="@+id/btn_led_down_on"
+        android:layout_toRightOf="@+id/btn_led_down_on"
+        android:id="@+id/btn_led_left_off"
+        android:text="LED LEFT OFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_below="@+id/btn_led_left_on"
+        android:id="@+id/btn_led_right_on"
+        android:text="LED RIGHT ON"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_below="@+id/btn_led_left_on"
+        android:layout_toRightOf="@+id/btn_led_right_on"
+        android:id="@+id/btn_led_right_off"
+        android:text="LED RIGHT OFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
