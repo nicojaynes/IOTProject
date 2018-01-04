@@ -41,13 +41,6 @@ public class MainActivity extends AppCompatActivity {
         ledRightOff.setOnClickListener(new ButtonListener());
 
         client = pahoMqttClient.getMqttClient(getApplicationContext(), Constants.MQTT_BROKER_URL, Constants.CLIENT_ID);
-
-//        String topic = "LED";
-//        try {
-//            pahoMqttClient.subscribe(client, topic, 1);
-//        } catch (MqttException e) {
-//            e.printStackTrace();
-//        }
     }
 
     private class ButtonListener implements View.OnClickListener {
