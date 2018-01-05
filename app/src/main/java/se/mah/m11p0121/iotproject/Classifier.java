@@ -13,23 +13,29 @@ import weka.core.Instance;
 import weka.core.*;
 
 public class Classifier {
-    public void classify() throws Exception {
+    private J48 tree = new J48();         // new instance of tree
+    private int classIndex;
+
+    public void setupClassifier() throws Exception {
         // load training data
         BufferedReader breader = null;
         // put the address of your training file here
         breader = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/bin/weka/api/train.arff"));
         Instances train = new Instances(breader);
-        train.setClassIndex(train.numAttributes() - 1);
+        classIndex = train.numAttributes() - 1;
+        train.setClassIndex(classIndex);
 
+        // build classifier
+        tree.buildClassifier(train);
+    }
+
+    public Instances newInstances() {
         // create a DenseInstance based on your live Acc and Gyr data
         DenseInstance instance = new DenseInstance(121); // assuming that you have 120 values + one class label
 
-        // build classifier
-        J48 tree = new J48();         // new instance of tree
-        tree.buildClassifier(train);
+
 
         // create instances for the live instance: first you need to create the attributes
-
         ArrayList<Attribute> attributes = new ArrayList<>();
         for (int i = 1; i < 21; i++) {
             attributes.add(new Attribute("AccX" + i));
@@ -55,9 +61,13 @@ public class Classifier {
 
         //	Instances unlabeled = new Instances(test);
         unlabeled.add(instance);
-        double clsLabel = tree.classifyInstance(unlabeled.instance(0));
-        unlabeled.instance(0).setClassValue(clsLabel);
-        int classIndex = train.numAttributes() - 1;
-        System.out.println("Detected Gesture: " + unlabeled.instance(0).attribute(classIndex).value((int) clsLabel));
+        return unlabeled;
+    }
+
+    public void classify(Instances unclassified) throws Exception {
+
+        double clsLabel = tree.classifyInstance(unclassified.instance(0));
+        unclassified.instance(0).setClassValue(clsLabel);
+        System.out.println("Detected Gesture: " + unclassified.instance(0).attribute(classIndex).value((int) clsLabel));
     }
 }
