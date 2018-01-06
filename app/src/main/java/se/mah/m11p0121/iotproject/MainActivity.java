@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
     private class ConnectThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
-        private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000- 00805f9b34fb");
+        private final UUID MY_UUID = UUID.fromString(Constants.UUID);
         private ConnectedThread mConnectedThread;
         public ConnectThread(BluetoothDevice device) {
             BluetoothSocket tmp = null;
@@ -231,19 +231,22 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     bytes += mmInStream.read(buffer, bytes, buffer.length - bytes);
                     for(int i = begin; i < bytes; i++) {
-                        if(buffer[i] == "h".getBytes()[0]) {
+/*                        if(buffer[i] == "h".getBytes()[0]) {
+                            Log.d("BTINPUT" , "h");
                             begin += 2;
-                        } else if (buffer[i] == ",".getBytes()[0]) {
-                            values++;
-                            if (values > 5) {
+                        } else*/
+                            if (buffer[i] == "\n".getBytes()[0]) {
+                            //values++;
+                                begin++;
+                            //if (values > 5) {
                                 mHandler.obtainMessage(1, begin, i, buffer).sendToTarget();
-                                begin = i + 2;
+                                begin = i + 1;
                                 if(i == bytes - 1) {
                                     bytes = 0;
                                     begin = 0;
                                 }
                                 values = 0;
-                            }
+                            //}
                         }
                     }
                 } catch (IOException e) {

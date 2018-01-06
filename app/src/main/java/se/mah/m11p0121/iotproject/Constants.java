@@ -2,6 +2,8 @@ package se.mah.m11p0121.iotproject;
 
 class Constants {
 
+    static final String UUID = "00001101-0000-1000-8000-00805F9B34FB";
+
     static final String MQTT_BROKER_URL = "tcp://m23.cloudmqtt.com:10999";
 
     static final String PUBLISH_TOPIC = "LED";
