@@ -85,6 +85,8 @@ class Classifier {
         classValues.add("down");
         classValues.add("left");
         classValues.add("right");
+        classValues.add("tilt_left");
+        classValues.add("tilt_right");
         attributes.add(new Attribute("gesture", classValues));
 
         // now create the instances
