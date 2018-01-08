@@ -25,11 +25,13 @@ class Classifier {
     // create a DenseInstance based on your live Acc and Gyr data
     private DenseInstance instance = new DenseInstance(121); // assuming that you have 120 values + one class label
     private int newValueIndex = 0;
+    private MainActivity mainActivity;
 
     Classifier(Context context) {
         // load training data
         BufferedReader breader;
-        InputStream arffStream = context.getResources().openRawResource(R.raw.train_big);
+        mainActivity = (MainActivity)context;
+        InputStream arffStream = mainActivity.getResources().openRawResource(R.raw.train_small);
         // put the address of your training file here
         try {
 
@@ -49,13 +51,12 @@ class Classifier {
                 e.printStackTrace();
             }
         }
-
     }
 
     synchronized void addValues(String[] newValues) {
         for(int i = 1; i < newValues.length; i++) {
             instance.setValue(newValueIndex++, Integer.parseInt(newValues[i]));
-            if(newValueIndex == 120) {
+            if(newValueIndex== 120) {
                 try {
                     classify(newInstances(instance));
                 } catch (Exception e) {
@@ -101,6 +102,8 @@ class Classifier {
 
         double clsLabel = tree.classifyInstance(unclassified.instance(0));
         unclassified.instance(0).setClassValue(clsLabel);
-        Log.d("GESTURECLASS" , "Detected Gesture: " + unclassified.instance(0).attribute(classIndex).value((int) clsLabel));
+        String gesture = unclassified.instance(0).attribute(classIndex).value((int) clsLabel);
+        Log.d("GESTURECLASS" , "Detected Gesture: " + gesture);
+        mainActivity.publishMsg(gesture);
     }
 }

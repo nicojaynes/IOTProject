@@ -98,6 +98,50 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
+    void publishMsg(String gesture) {
+        switch(gesture) {
+            case "up":
+                try {
+                    pahoMqttClient.publishMessage(client, Constants.LED_UP_ON, 1, Constants.PUBLISH_TOPIC);
+                    pahoMqttClient.publishMessage(client, Constants.LED_RIGHT_OFF, 1, Constants.PUBLISH_TOPIC);
+                    pahoMqttClient.publishMessage(client, Constants.LED_LEFT_OFF, 1, Constants.PUBLISH_TOPIC);
+                    pahoMqttClient.publishMessage(client, Constants.LED_DOWN_OFF, 1, Constants.PUBLISH_TOPIC);
+                } catch (MqttException | UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "down":
+                try {
+                    pahoMqttClient.publishMessage(client, Constants.LED_DOWN_ON, 1, Constants.PUBLISH_TOPIC);
+                    pahoMqttClient.publishMessage(client, Constants.LED_UP_OFF, 1, Constants.PUBLISH_TOPIC);
+                    pahoMqttClient.publishMessage(client, Constants.LED_RIGHT_OFF, 1, Constants.PUBLISH_TOPIC);
+                    pahoMqttClient.publishMessage(client, Constants.LED_LEFT_OFF, 1, Constants.PUBLISH_TOPIC);
+                } catch (MqttException | UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "right":
+                try {
+                    pahoMqttClient.publishMessage(client, Constants.LED_RIGHT_ON, 1, Constants.PUBLISH_TOPIC);
+                    pahoMqttClient.publishMessage(client, Constants.LED_UP_OFF, 1, Constants.PUBLISH_TOPIC);
+                    pahoMqttClient.publishMessage(client, Constants.LED_LEFT_OFF, 1, Constants.PUBLISH_TOPIC);
+                    pahoMqttClient.publishMessage(client, Constants.LED_DOWN_OFF, 1, Constants.PUBLISH_TOPIC);
+                } catch (MqttException | UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "left":
+                try {
+                    pahoMqttClient.publishMessage(client, Constants.LED_LEFT_ON, 1, Constants.PUBLISH_TOPIC);
+                    pahoMqttClient.publishMessage(client, Constants.LED_UP_OFF, 1, Constants.PUBLISH_TOPIC);
+                    pahoMqttClient.publishMessage(client, Constants.LED_RIGHT_OFF, 1, Constants.PUBLISH_TOPIC);
+                    pahoMqttClient.publishMessage(client, Constants.LED_DOWN_OFF, 1, Constants.PUBLISH_TOPIC);
+                } catch (MqttException | UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+
     private class ButtonListener implements View.OnClickListener {
 
         @Override
@@ -106,72 +150,56 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.btn_led_up_on:
                     try {
                         pahoMqttClient.publishMessage(client, Constants.LED_UP_ON, 1, Constants.PUBLISH_TOPIC);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    } catch (UnsupportedEncodingException e) {
+                    } catch (MqttException | UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                     break;
                 case R.id.btn_led_up_off:
                     try {
                         pahoMqttClient.publishMessage(client, Constants.LED_UP_OFF, 1, Constants.PUBLISH_TOPIC);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    } catch (UnsupportedEncodingException e) {
+                    } catch (MqttException | UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                     break;
                 case R.id.btn_led_down_on:
                     try {
                         pahoMqttClient.publishMessage(client, Constants.LED_DOWN_ON, 1, Constants.PUBLISH_TOPIC);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    } catch (UnsupportedEncodingException e) {
+                    } catch (MqttException | UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                     break;
                 case R.id.btn_led_down_off:
                     try {
                         pahoMqttClient.publishMessage(client, Constants.LED_DOWN_OFF, 1, Constants.PUBLISH_TOPIC);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    } catch (UnsupportedEncodingException e) {
+                    } catch (MqttException | UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                     break;
                 case R.id.btn_led_right_on:
                     try {
                         pahoMqttClient.publishMessage(client, Constants.LED_RIGHT_ON, 1, Constants.PUBLISH_TOPIC);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    } catch (UnsupportedEncodingException e) {
+                    } catch (MqttException | UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                     break;
                 case R.id.btn_led_right_off:
                     try {
                         pahoMqttClient.publishMessage(client, Constants.LED_RIGHT_OFF, 1, Constants.PUBLISH_TOPIC);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    } catch (UnsupportedEncodingException e) {
+                    } catch (MqttException | UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                     break;
                 case R.id.btn_led_left_on:
                     try {
                         pahoMqttClient.publishMessage(client, Constants.LED_LEFT_ON, 1, Constants.PUBLISH_TOPIC);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    } catch (UnsupportedEncodingException e) {
+                    } catch (MqttException | UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                     break;
                 case R.id.btn_led_left_off:
                     try {
                         pahoMqttClient.publishMessage(client, Constants.LED_LEFT_OFF, 1, Constants.PUBLISH_TOPIC);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    } catch (UnsupportedEncodingException e) {
+                    } catch (MqttException | UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                     break;
@@ -184,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         private final BluetoothDevice mmDevice;
         private final UUID MY_UUID = UUID.fromString(Constants.UUID);
         private ConnectedThread mConnectedThread;
-        public ConnectThread(BluetoothDevice device) {
+        ConnectThread(BluetoothDevice device) {
             BluetoothSocket tmp = null;
             mmDevice = device;
             try {
@@ -217,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
         private final InputStream mmInStream;
 //        private final OutputStream mmOutStream;
 
-        public ConnectedThread(BluetoothSocket socket) {
+        ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
 //            OutputStream tmpOut = null;
