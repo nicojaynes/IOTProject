@@ -29,7 +29,7 @@ class Classifier {
     Classifier(Context context) {
         // load training data
         BufferedReader breader;
-        InputStream arffStream = context.getResources().openRawResource(R.raw.train_small);
+        InputStream arffStream = context.getResources().openRawResource(R.raw.train_big);
         // put the address of your training file here
         try {
 
@@ -55,7 +55,7 @@ class Classifier {
     synchronized void addValues(String[] newValues) {
         for(int i = 1; i < newValues.length; i++) {
             instance.setValue(newValueIndex++, Integer.parseInt(newValues[i]));
-            if(newValueIndex== 120) {
+            if(newValueIndex == 120) {
                 try {
                     classify(newInstances(instance));
                 } catch (Exception e) {
