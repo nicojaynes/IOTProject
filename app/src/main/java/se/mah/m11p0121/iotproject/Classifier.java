@@ -31,7 +31,7 @@ class Classifier {
         // load training data
         BufferedReader breader;
         mainActivity = (MainActivity)context;
-        InputStream arffStream = mainActivity.getResources().openRawResource(R.raw.train_small);
+        InputStream arffStream = mainActivity.getResources().openRawResource(R.raw.train_big);
         // put the address of your training file here
         try {
 
