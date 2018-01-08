@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothDevice mDevice;
     private ConnectThread mConnectThread;
+    private Classifier classifier;
     public Handler mHandler;
 
     @Override
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        classifier = new Classifier(this);
         pahoMqttClient = new PahoMqttClient();
 
         ledUpOn = findViewById(R.id.btn_led_up_on);
@@ -85,7 +87,10 @@ public class MainActivity extends AppCompatActivity {
                     case 1:
                         String readMessage = new String(readBuf);
                         readMessage = readMessage.substring(begin, end);
-                        Log.d("NEWENTRY", readMessage);
+                        String[]values = readMessage.split(","); //note that values[0] will (usually) be empty after this due to leading empty strings
+                        classifier.addValues(values);
+                        //Log.d("SPLITSIZE", ""+ values.length);
+                        //Log.d("NEWENTRY", readMessage);
                         break;
                 }
             }
