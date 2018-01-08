@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                         String[]values = readMessage.split(","); //note that values[0] will (usually) be empty after this due to leading empty strings
                         classifier.addValues(values);
                         //Log.d("SPLITSIZE", ""+ values.length);
-                        //Log.d("NEWENTRY", readMessage);
+                        Log.d("NEWENTRY", readMessage);
                         break;
                 }
             }

@@ -52,7 +52,7 @@ class Classifier {
 
     }
 
-    void addValues(String[] newValues) {
+    synchronized void addValues(String[] newValues) {
         for(int i = 1; i < newValues.length; i++) {
             instance.setValue(newValueIndex++, Integer.parseInt(newValues[i]));
             if(newValueIndex== 120) {
