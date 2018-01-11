@@ -11,26 +11,25 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.util.Set;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
-    private Button ledUpOn, ledUpOff, ledDownOn, ledDownOff, ledLeftOn, ledLeftOff, ledRightOn, ledRightOff;
     private PahoMqttClient pahoMqttClient;
     private MqttAndroidClient client;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothDevice mDevice;
-    private ConnectThread mConnectThread;
     private Classifier classifier;
-    public Handler mHandler;
+    public ValueHandler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +39,14 @@ public class MainActivity extends AppCompatActivity {
         classifier = new Classifier(this);
         pahoMqttClient = new PahoMqttClient();
 
-        ledUpOn = findViewById(R.id.btn_led_up_on);
-        ledUpOff = findViewById(R.id.btn_led_up_off);
-        ledDownOn = findViewById(R.id.btn_led_down_on);
-        ledDownOff = findViewById(R.id.btn_led_down_off);
-        ledLeftOn = findViewById(R.id.btn_led_left_on);
-        ledLeftOff = findViewById(R.id.btn_led_left_off);
-        ledRightOn = findViewById(R.id.btn_led_right_on);
-        ledRightOff = findViewById(R.id.btn_led_right_off);
+        Button ledUpOn = findViewById(R.id.btn_led_up_on);
+        Button ledUpOff = findViewById(R.id.btn_led_up_off);
+        Button ledDownOn = findViewById(R.id.btn_led_down_on);
+        Button ledDownOff = findViewById(R.id.btn_led_down_off);
+        Button ledLeftOn = findViewById(R.id.btn_led_left_on);
+        Button ledLeftOff = findViewById(R.id.btn_led_left_off);
+        Button ledRightOn = findViewById(R.id.btn_led_right_on);
+        Button ledRightOff = findViewById(R.id.btn_led_right_off);
 
         ledUpOn.setOnClickListener(new ButtonListener());
         ledUpOff.setOnClickListener(new ButtonListener());
@@ -63,39 +62,59 @@ public class MainActivity extends AppCompatActivity {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             // Device does not support Bluetooth
-        }
+            Toast.makeText(this, "Error: check your bluetooth connection and restart the app",
+                    Toast.LENGTH_LONG).show();
 
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, 1);
-        }
+        } else {
 
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices(); if (pairedDevices.size() > 0) {
-            for (BluetoothDevice device : pairedDevices) {
-                mDevice = device;
-            } }
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, 1);
+            }
 
-        mConnectThread = new ConnectThread(mDevice);
-        mConnectThread.start();
-
-        mHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                byte[] readBuf = (byte[]) msg.obj;
-                int begin = (int)msg.arg1;
-                int end = (int)msg.arg2;
-                switch(msg.what) {
-                    case 1:
-                        String readMessage = new String(readBuf);
-                        readMessage = readMessage.substring(begin, end);
-                        String[]values = readMessage.split(","); //note that values[0] will (usually) be empty after this due to leading empty strings
-                        classifier.addValues(values);
-                        //Log.d("SPLITSIZE", ""+ values.length);
-                        Log.d("NEWENTRY", readMessage);
-                        break;
+            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+            if (pairedDevices.size() > 0) {
+                for (BluetoothDevice device : pairedDevices) {
+                    mDevice = device;
                 }
             }
-        };
+
+            ConnectThread mConnectThread = new ConnectThread(mDevice);
+            mConnectThread.start();
+
+            mHandler = new ValueHandler(this);
+        }
+    }
+
+    Classifier getClassifier () {
+        return classifier;
+    }
+
+    private static class ValueHandler extends Handler {
+        private final WeakReference <MainActivity> mainActivityWeakReference;
+        private Classifier mClassifier;
+
+        ValueHandler (MainActivity mainActivity) {
+            mainActivityWeakReference = new WeakReference<>(mainActivity);
+            mClassifier = mainActivityWeakReference.get().getClassifier();
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            byte[] readBuf = (byte[]) msg.obj;
+            int begin = msg.arg1;
+            int end = msg.arg2;
+            switch (msg.what) {
+                case 1:
+                    String readMessage = new String(readBuf);
+                    readMessage = readMessage.substring(begin, end);
+                    String[] values = readMessage.split(","); //note that values[0] will (usually) be empty after this due to leading empty strings
+                    mClassifier.addValues(values);
+                    //Log.d("SPLITSIZE", ""+ values.length);
+                    Log.d("NEWENTRY", readMessage);
+                    break;
+            }
+        }
     }
 
     void publishMsg(String gesture) {
@@ -209,15 +228,17 @@ public class MainActivity extends AppCompatActivity {
 
     private class ConnectThread extends Thread {
         private final BluetoothSocket mmSocket;
-        private final BluetoothDevice mmDevice;
+        //private final BluetoothDevice mmDevice;
         private final UUID MY_UUID = UUID.fromString(Constants.UUID);
         private ConnectedThread mConnectedThread;
         ConnectThread(BluetoothDevice device) {
             BluetoothSocket tmp = null;
-            mmDevice = device;
+            //mmDevice = device;
             try {
                 tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
-            } catch (IOException e) { }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             mmSocket = tmp;
         }
         public void run() {
@@ -227,32 +248,34 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException connectException) {
                 try {
                     mmSocket.close();
-                } catch (IOException closeException) { }
+                } catch (IOException closeException) {
+                    closeException.printStackTrace();
+                }
                 return; }
 
             mConnectedThread = new ConnectedThread(mmSocket);
             mConnectedThread.start();
         }
-        public void cancel() {
+/*        public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
-        }
+            } catch (IOException e) {e.printStackTrace(); }
+        }*/
     }
 
     private class ConnectedThread extends Thread {
-        private final BluetoothSocket mmSocket;
+//        private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
 //        private final OutputStream mmOutStream;
 
         ConnectedThread(BluetoothSocket socket) {
-            mmSocket = socket;
+//            mmSocket = socket;
             InputStream tmpIn = null;
 //            OutputStream tmpOut = null;
             try {
                 tmpIn = socket.getInputStream();
 //                tmpOut = socket.getOutputStream();
-            } catch (IOException e) { }
+            } catch (IOException e) {e.printStackTrace(); }
             mmInStream = tmpIn;
 //            mmOutStream = tmpOut;
         }
@@ -260,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
             byte[] buffer = new byte[1024];
             int begin = 0;
             int bytes = 0;
-            int values = 0;
+//            int values = 0;
             while (true) {
                 try {
                     bytes += mmInStream.read(buffer, bytes, buffer.length - bytes);
@@ -279,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
                                     bytes = 0;
                                     begin = 0;
                                 }
-                                values = 0;
+//                                values = 0;
                             //}
                         }
                     }
@@ -292,9 +315,10 @@ public class MainActivity extends AppCompatActivity {
                 mmOutStream.write(bytes);
             } catch (IOException e) { }
         }*/
-        public void cancel() {
+/*        public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
-        } }
+            } catch (IOException e) { e.printStackTrace();}
+        }*/
+    }
 }

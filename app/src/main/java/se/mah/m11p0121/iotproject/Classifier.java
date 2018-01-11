@@ -4,10 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
-//import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-//import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,7 +12,6 @@ import java.util.ArrayList;
 import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
-import weka.core.Instance;
 import weka.core.Instances;
 
 class Classifier {
